@@ -1,0 +1,3 @@
+# chatbot.py and tictactoe.py use only the standard library (Tkinter)
+pandas>=1.3
+scikit-surprise>=1.1.3
