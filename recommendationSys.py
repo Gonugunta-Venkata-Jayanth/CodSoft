@@ -4,10 +4,22 @@ from surprise import SVD
 from surprise.model_selection import train_test_split
 from surprise import accuracy
 
+RATING_MIN, RATING_MAX = 1, 5
+
 # utf-8-sig strips the byte-order mark at the start of file.csv
 dataset = pd.read_csv("file.csv", encoding="utf-8-sig")
 
-reader = Reader(rating_scale=(1, 5))
+# Validate ratings: drop rows with missing values and clip ratings into the 1-5 scale
+before = len(dataset)
+dataset = dataset.dropna(subset=['user', 'item', 'rating'])
+dataset['rating'] = pd.to_numeric(dataset['rating'], errors='coerce')
+dataset = dataset.dropna(subset=['rating'])
+out_of_range = ((dataset['rating'] < RATING_MIN) | (dataset['rating'] > RATING_MAX)).sum()
+dataset['rating'] = dataset['rating'].clip(RATING_MIN, RATING_MAX)
+print(f'Loaded {before} ratings; dropped {before - len(dataset)} invalid rows; '
+      f'clipped {out_of_range} ratings into the {RATING_MIN}-{RATING_MAX} range.')
+
+reader = Reader(rating_scale=(RATING_MIN, RATING_MAX))
 data = Dataset.load_from_df(dataset[['user', 'item', 'rating']], reader)
 
 trainset, testset = train_test_split(data, test_size=0.2, random_state=42)
