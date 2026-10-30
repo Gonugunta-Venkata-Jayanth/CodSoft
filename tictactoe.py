@@ -57,14 +57,25 @@ def best_move(board):
                 best_move = i
     return best_move
 
+game_over = False
+
+def end_game(message):
+    global game_over
+    game_over = True
+    result_label.config(text=message)
+    for b in buttons:
+        b.config(state='disabled')  # no more moves once the game is decided
+
 def player_move(button, index):
+    if game_over:
+        return
     if board[index] == ' ':
         button.config(text='X', state='disabled')
         board[index] = 'X'
         if check_winner('X'):
-            result_label.config(text="You win!")
+            end_game("You win!")
         elif is_full(board):
-            result_label.config(text="It's a draw!")
+            end_game("It's a draw!")
         else:
             ai_move()
 
@@ -74,9 +85,9 @@ def ai_move():
     button.config(text='O', state='disabled')
     board[ai_index] = 'O'
     if check_winner('O'):
-        result_label.config(text="AI wins!")
+        end_game("AI wins!")
     elif is_full(board):
-        result_label.config(text="It's a draw!")
+        end_game("It's a draw!")
 
 buttons = []
 for i in range(9):
