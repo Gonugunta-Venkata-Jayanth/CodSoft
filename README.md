@@ -56,16 +56,18 @@ A desktop chatbot built with **Tkinter** that answers using pattern matching.
 A Tic-Tac-Toe game with a Tkinter GUI where you (**X**) play against the computer (**O**).
 
 - The AI uses the **Minimax** algorithm to search the full game tree (+1 AI win, −1 player win, 0 draw), so it never loses.
-- The game checks all eight winning lines and draws after every move, and shows the result in the window.
+- The game checks all eight winning lines and draws after every move, shows the result in the window, and locks the board once the game is decided.
 
 ## 3. Recommendation System (`recommendationSys.py`)
 
 A **collaborative-filtering** recommender built with the [Surprise](https://surpriselib.com/) library.
 
-- **Data:** `file.csv`, 1,000 ratings with columns `user`, `item`, `rating` (1,000 users × 30 movies).
-- **Model:** `SVD` matrix factorisation trained on an 80/20 train/test split.
+- **Data:** `file.csv`, 1,000 ratings with columns `user`, `item`, `rating` (1,000 users × 30 movies, one rating per user).
+- **Validation:** drops missing or non-numeric ratings and clips ratings into the 1–5 scale (202 ratings in `file.csv` are below 1).
+- **Model:** `SVD` matrix factorisation trained on an 80/20 train/test split (`random_state=42`).
 - **Evaluation:** prints the RMSE on the test set.
-- **Recommendation:** predicts a rating for every item for a chosen user and prints the **top 3** items.
+- **Recommendation:** looks up the user id case-insensitively (`User1` → `user1`), predicts a rating for every item the user has not rated yet, and prints the **top 3**.
+- **Limitation:** with only one rating per user, SVD has very little signal per user, so predictions stay close to each item's average.
 
 ---
 
@@ -83,7 +85,7 @@ CodSoft/
 ├── tictactoe.py           # Task: Tic-Tac-Toe with Minimax AI (Tkinter)
 ├── recommendationSys.py   # Task: SVD recommendation system
 ├── file.csv               # Ratings data for the recommender
-├── chatbot                # (empty placeholder file)
+├── requirements.txt
 └── README.md
 ```
 
@@ -98,7 +100,7 @@ python chatbot.py
 python tictactoe.py
 
 # Recommendation system
-pip install pandas scikit-surprise
+pip install -r requirements.txt
 python recommendationSys.py
 ```
 
